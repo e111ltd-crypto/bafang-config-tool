@@ -6,7 +6,8 @@ import GattExplorer from './components/GattExplorer'
 import Dashboard from './components/Dashboard'
 import Mapper from './components/Mapper'
 import { parseTelemetry } from './lib/parser'
-
+import Toasts from './components/Toasts'
+import Onboarding from './components/Onboarding'
 function App() {
   const [telemetry, setTelemetry] = useState({})
   const [server, setServer] = useState(null)
@@ -115,6 +116,26 @@ function App() {
     }
   }
 
+  const [toasts, setToasts] = React.useState([])
+  const [onboardingOpen, setOnboardingOpen] = React.useState(false)
+
+  function addToast({ msg, type = 'info', duration = 4000 }) {
+    const id = Math.random().toString(36).slice(2, 9)
+    setToasts(t => [...t, { id, msg, type, duration }])
+    return id
+  }
+
+  function removeToast(id) {
+    setToasts(t => t.filter(x => x.id !== id))
+  }
+
+  // small helper: notify user on BLE events
+  React.useEffect(() => {
+    if (bleStatus === 'connected') addToast({ msg: 'Bluetooth connected', type: 'success' })
+    else if (bleStatus === 'disconnected') addToast({ msg: 'Bluetooth disconnected', type: 'warning' })
+    else if (bleStatus === 'error') addToast({ msg: 'Bluetooth error', type: 'error' })
+  }, [bleStatus])
+
   return (
     <div className="app-root">
       <header className="app-header">
@@ -127,7 +148,9 @@ function App() {
           </div>
         </div>
 
-
+        <div className="header-actions">
+          <button onClick={() => setOnboardingOpen(true)}>Help</button>
+        </div>
       </header>
 
       <main>
@@ -146,6 +169,9 @@ function App() {
           <LogViewer logs={logs} onClear={clearLogs} />
         </section>
       </main>
+
+      <Toasts toasts={toasts} onRemove={removeToast} />
+      <Onboarding open={onboardingOpen} onClose={() => setOnboardingOpen(false)} />
 
       <footer>
         <small>Built for Varstrom EDK01 — Web Bluetooth (PWA) demo. Use Chrome/Edge on desktop or Android for Web Bluetooth support.</small>
