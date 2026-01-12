@@ -8,6 +8,7 @@ import Mapper from './components/Mapper'
 import { parseTelemetry } from './lib/parser'
 import Toasts from './components/Toasts'
 import Onboarding from './components/Onboarding'
+import Presets from './components/Presets'
 function App() {
   const [telemetry, setTelemetry] = useState({})
   const [server, setServer] = useState(null)
@@ -160,6 +161,8 @@ function App() {
           {server && <GattExplorer server={server} onRawData={handleRawData} onCharData={handleCharData} />}
 
           <Mapper mappings={mappings} onChange={setMappings} />
+
+          <Presets mappings={mappings} onApply={setMappings} />
 
         </aside>
 
