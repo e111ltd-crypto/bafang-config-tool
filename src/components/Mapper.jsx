@@ -8,11 +8,11 @@ function loadMappings() {
 
 function saveMappings(m) { localStorage.setItem(STORAGE_KEY, JSON.stringify(m)) }
 
-export default function Mapper({ mappings, onChange }) {
+export default function Mapper({ onChange }) {
   const [list, setList] = useState(loadMappings())
   const [form, setForm] = useState({ name:'EKD01 preset', charUuid:'', parseType:'auto', keyMap: '{}' })
 
-  useEffect(() => { onChange && onChange(list) }, [list])
+  useEffect(() => { onChange && onChange(list) }, [list, onChange])
 
   function addMapping() {
     const parsedKeyMap = (() => {

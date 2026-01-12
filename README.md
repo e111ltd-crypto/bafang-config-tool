@@ -39,6 +39,25 @@ Security & compatibility
 - Web Bluetooth requires a secure context (HTTPS or localhost) and is best supported in Chrome/Edge on desktop or Android.
 - If you have official Varstrom protocol docs, we can add a specific parser to map binary fields to telemetry.
 
+Live testing on your bike
+
+1. Ensure your bike is powered and the EKD01 is on. Use Chrome or Edge on Android/desktop (Web Bluetooth required).
+2. Open the app and click **Connect device**. Select the EKD01 from the device list (the filter tries devices with name starting with `Varstrom`).
+3. In **GATT Explorer**, click **Discover Services**, then select a service and open characteristics. Look for a characteristic that has **notify** property.
+4. Open **Characteristic Mappings** and add a new mapping:
+   - **name**: EKD01 NUS (or any friendly name)
+   - **Characteristic UUID**: paste the characteristic UUID or a substring of it (e.g., `6e400001` for NUS)
+   - **parse**: choose `kv` (Key:Value) if your device sends `SPD:12.3;BAT:85;ASS:3;CAD:80`, or `auto` to try to detect it automatically
+   - **keyMap**: provide a JSON mapping from source keys to dashboard fields, e.g. `{ "SPD":"speed", "BAT":"battery", "ASS":"assist", "CAD":"cadence" }`
+5. Save mapping and trigger a notification (rotate wheel, power on, or start riding). The app will parse notifications and map fields to the dashboard.
+
+If you can share any raw notification payloads or packet captures, I will implement an EKD01 preset so one-click mapping works for you.
+
+Logging & export
+
+- The app now captures incoming BLE notifications (timestamp, characteristic UUID, raw text, raw hex, and parsed object).
+- Open the **Notification Log** panel to view entries and use **Export JSON** or **Export CSV** to download captured logs. Use these logs to share payloads for a one-click EKD01 preset.
+
 Next steps and how you can help
 
 - If you can share device logs or the GATT spec, I will add a precise EKD01 parser and presets.
